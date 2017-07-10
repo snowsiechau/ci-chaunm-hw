@@ -19,6 +19,9 @@ public class GameWindow extends JFrame{
     BufferedImage background;
     BufferedImage corePlayer;
     private int playerX;
+    private int playerY;
+
+    private int runBackGround;
 
 
     BufferedImage backBufferImage;
@@ -32,13 +35,15 @@ public class GameWindow extends JFrame{
 
 
         playerX = background.getWidth() / 2;
+        playerY = this.getHeight() - 100;
 
         backBufferImage = new BufferedImage(this.getWidth(),this.getHeight(), BufferedImage.TYPE_INT_ARGB);
         backBufferGraphic2D = (Graphics2D) backBufferImage.getGraphics();
 
-
+        runBackGround = this.getHeight() - background.getHeight();
 
         setupInput();
+
         this.setVisible(true);
     }
 
@@ -53,8 +58,27 @@ public class GameWindow extends JFrame{
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()){
                     case KeyEvent.VK_RIGHT:
-                        playerX += 5;
+                        if (playerX < background.getWidth() - 30){
+                            playerX += 5;
+                        }
+                        break;
 
+                    case KeyEvent.VK_LEFT:
+                        if (playerX > 5){
+                            playerX -= 5;
+                        }
+                        break;
+
+                    case KeyEvent.VK_UP:
+                        if (playerY > 30 ){
+                            playerY -= 5;
+                        }
+                        break;
+
+                    case KeyEvent.VK_DOWN:
+                        if (playerY < 720 ){
+                            playerY += 5;
+                    }
                         break;
 
 
@@ -79,12 +103,17 @@ public class GameWindow extends JFrame{
                 backBufferGraphic2D.setColor(Color.BLACK);
                 backBufferGraphic2D.fillRect(0,0,this.getWidth(),this.getHeight());
 
-                int backgroudHeight = background.getHeight();
 
-                backBufferGraphic2D.drawImage(background, 0, this.getHeight() - backgroudHeight, null);
-                backBufferGraphic2D.drawImage(corePlayer, playerX, this.getHeight() - 100, null);
+                backBufferGraphic2D.drawImage(background, 0, runBackGround, null);
+
+                if(runBackGround < (this.getHeight() - 400)){
+                    runBackGround +=20;
+                }
+
+                backBufferGraphic2D.drawImage(corePlayer, playerX, playerY, null);
 
                 Graphics2D g2d = (Graphics2D)this.getGraphics();
+
                 g2d.drawImage(backBufferImage,0,0,null);
 
             } catch (InterruptedException e) {

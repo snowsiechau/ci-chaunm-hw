@@ -1,5 +1,6 @@
 package game;
 
+import game.enemies.Enemy;
 import game.players.Player;
 import game.players.PlayerSpell;
 
@@ -26,6 +27,7 @@ public class GameWindow extends JFrame{
 
     Player player = new Player();
     ArrayList<PlayerSpell> playerSpells = new ArrayList<>();
+    ArrayList<Enemy> enemies = new ArrayList<>();
 
     private int backGroundY;
 
@@ -33,6 +35,8 @@ public class GameWindow extends JFrame{
     Graphics2D backBufferGraphic2D;
 
     boolean rightPressed, leftPressed, upPressed, downPressed, xPressed;
+
+    private int delaySpell, delayEnemiesGreen, delayEnemiesRed;
 
     public GameWindow(){
 
@@ -47,8 +51,6 @@ public class GameWindow extends JFrame{
 
         backBufferImage = new BufferedImage(this.getWidth(),this.getHeight(), BufferedImage.TYPE_INT_ARGB);
         backBufferGraphic2D = (Graphics2D) backBufferImage.getGraphics();
-
-
 
         setupInput();
 
@@ -126,10 +128,9 @@ public class GameWindow extends JFrame{
             try {
                 Thread.sleep(1);
 
-                run();
-
                 render();
 
+                run();
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -139,7 +140,7 @@ public class GameWindow extends JFrame{
 
     private void run(){
 
-        if(backGroundY < 0){
+        if(backGroundY <= 0){
             backGroundY ++;
         }
         int dx = 0;
@@ -147,35 +148,67 @@ public class GameWindow extends JFrame{
 
         if (rightPressed){
             if (player.x < background.getWidth() - 30){
-                dx = 5;
+                dx += 5;
             }
         }
         if (leftPressed){
             if (player.x > 5){
-                dx = - 5;
+                dx -= 5;
             }
         }
         if (downPressed){
             if (player.y < 720 ){
-                dy = 5;
+                dy += 5;
             }
         }
         if (upPressed){
             if (player.y > 30 ){
-                dy = - 5;
+                dy -= 5;
             }
         }
 
-        if (xPressed){
-            PlayerSpell playerSpell = new PlayerSpell();
+        if (delaySpell > 20) {
+            if (xPressed) {
+                PlayerSpell playerSpell = new PlayerSpell();
 
-            playerSpell.x = player.x + 5;
-            playerSpell.y = player.y - 10;
+                playerSpell.x = player.x + 5;
+                playerSpell.y = player.y - 10;
 
-           playerSpell.image = Utils.loadAssetsImage("player-bullets/a/1.png");
+                playerSpell.image = Utils.loadAssetsImage("player-bullets/a/1.png");
 
-            playerSpells.add(playerSpell);
+                playerSpells.add(playerSpell);
 
+                delaySpell = 0;
+            }
+        }else {
+            delaySpell++;
+        }
+
+        //Enemies
+
+        if (delayEnemiesGreen > 20){
+            Enemy enemy = new Enemy();
+
+            enemy.x = (int) (Math.random()* (background.getWidth()-15) );
+            enemy.y = 0;
+
+            enemy.imageGreen = Utils.loadAssetsImage("enemies/bullets/green.png");
+
+            enemies.add(enemy);
+
+            delayEnemiesGreen = 0;
+
+        }else {
+            delayEnemiesGreen++;
+        }
+
+
+
+
+        // Move
+        for (Enemy enemy : enemies
+             ) {
+            enemy.move();
         }
 
         player.move(dx,dy);
@@ -192,7 +225,12 @@ public class GameWindow extends JFrame{
 
         backBufferGraphic2D.drawImage(background, 0, backGroundY, null);
 
-        player.reder(backBufferGraphic2D);
+        player.render(backBufferGraphic2D);
+
+        for (Enemy enemy: enemies
+             ) {
+            enemy.render(backBufferGraphic2D);
+        }
 
         for (PlayerSpell playerSpell : playerSpells
              ) {

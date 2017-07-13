@@ -1,5 +1,8 @@
 package game;
 
+import game.players.Player;
+import game.players.PlayerSpell;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +13,9 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static sun.misc.PostVMInitHook.run;
 
 /**
  * Created by SNOW on 7/9/2017.
@@ -17,16 +23,16 @@ import java.io.IOException;
 public class GameWindow extends JFrame{
 
     BufferedImage background;
-    BufferedImage corePlayer;
-    private int playerX;
-    private int playerY;
 
-    private int runBackGround;
+    Player player = new Player();
+    ArrayList<PlayerSpell> playerSpells = new ArrayList<>();
 
+    private int backGroundY;
 
     BufferedImage backBufferImage;
     Graphics2D backBufferGraphic2D;
 
+    boolean rightPressed, leftPressed, upPressed, downPressed, xPressed;
 
     public GameWindow(){
 
@@ -34,13 +40,15 @@ public class GameWindow extends JFrame{
         loadImage();
 
 
-        playerX = background.getWidth() / 2;
-        playerY = this.getHeight() - 100;
+        player.x = background.getWidth() / 2;
+        player.y = this.getHeight() - 100;
+
+        backGroundY = this.getHeight() - background.getHeight();
 
         backBufferImage = new BufferedImage(this.getWidth(),this.getHeight(), BufferedImage.TYPE_INT_ARGB);
         backBufferGraphic2D = (Graphics2D) backBufferImage.getGraphics();
 
-        runBackGround = this.getHeight() - background.getHeight();
+
 
         setupInput();
 
@@ -58,29 +66,25 @@ public class GameWindow extends JFrame{
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()){
                     case KeyEvent.VK_RIGHT:
-                        if (playerX < background.getWidth() - 30){
-                            playerX += 5;
-                        }
+                        rightPressed = true;
                         break;
 
                     case KeyEvent.VK_LEFT:
-                        if (playerX > 5){
-                            playerX -= 5;
-                        }
+                        leftPressed = true;
                         break;
 
                     case KeyEvent.VK_UP:
-                        if (playerY > 30 ){
-                            playerY -= 5;
-                        }
+                        upPressed = true;
+
                         break;
 
                     case KeyEvent.VK_DOWN:
-                        if (playerY < 720 ){
-                            playerY += 5;
-                    }
+                        downPressed = true;
                         break;
 
+                    case KeyEvent.VK_X:
+                        xPressed = true;
+                        break;
 
                     default:
                         break;
@@ -89,32 +93,43 @@ public class GameWindow extends JFrame{
 
             @Override
             public void keyReleased(KeyEvent e) {
+                switch (e.getKeyCode()){
+                    case KeyEvent.VK_RIGHT:
+                        rightPressed = false;
+                        break;
 
+                    case KeyEvent.VK_LEFT:
+                        leftPressed = false;
+                        break;
+
+                    case KeyEvent.VK_UP:
+                        upPressed = false;
+                        break;
+
+                    case KeyEvent.VK_DOWN:
+                        downPressed = false;
+                        break;
+
+                    case KeyEvent.VK_X:
+                        xPressed = false;
+
+                    default:
+                        break;
+                }
             }
         });
 
     }
 
-    public void run(){
+    public void loop(){
         while (true){
             try {
-                Thread.sleep(17);
+                Thread.sleep(1);
 
-                backBufferGraphic2D.setColor(Color.BLACK);
-                backBufferGraphic2D.fillRect(0,0,this.getWidth(),this.getHeight());
+                run();
 
+                render();
 
-                backBufferGraphic2D.drawImage(background, 0, runBackGround, null);
-
-                if(runBackGround < (this.getHeight() - 400)){
-                    runBackGround +=20;
-                }
-
-                backBufferGraphic2D.drawImage(corePlayer, playerX, playerY, null);
-
-                Graphics2D g2d = (Graphics2D)this.getGraphics();
-
-                g2d.drawImage(backBufferImage,0,0,null);
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -122,13 +137,78 @@ public class GameWindow extends JFrame{
         }
     }
 
-    private void loadImage() {
-        try {
-            background = ImageIO.read(new File("assets/images/background/0.png"));
-            corePlayer = ImageIO.read(new File("assets/images/players/straight/0.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void run(){
+
+        if(backGroundY < 0){
+            backGroundY ++;
         }
+        int dx = 0;
+        int dy = 0;
+
+        if (rightPressed){
+            if (player.x < background.getWidth() - 30){
+                dx = 5;
+            }
+        }
+        if (leftPressed){
+            if (player.x > 5){
+                dx = - 5;
+            }
+        }
+        if (downPressed){
+            if (player.y < 720 ){
+                dy = 5;
+            }
+        }
+        if (upPressed){
+            if (player.y > 30 ){
+                dy = - 5;
+            }
+        }
+
+        if (xPressed){
+            PlayerSpell playerSpell = new PlayerSpell();
+
+            playerSpell.x = player.x + 5;
+            playerSpell.y = player.y - 10;
+
+           playerSpell.image = Utils.loadAssetsImage("player-bullets/a/1.png");
+
+            playerSpells.add(playerSpell);
+
+        }
+
+        player.move(dx,dy);
+
+        for (PlayerSpell playerSpell : playerSpells
+                ) {
+            playerSpell.move();
+        }
+    }
+
+    private void render() {
+        backBufferGraphic2D.setColor(Color.BLACK);
+        backBufferGraphic2D.fillRect(0,0,this.getWidth(),this.getHeight());
+
+        backBufferGraphic2D.drawImage(background, 0, backGroundY, null);
+
+        player.reder(backBufferGraphic2D);
+
+        for (PlayerSpell playerSpell : playerSpells
+             ) {
+            playerSpell.render(backBufferGraphic2D);
+        }
+
+        Graphics2D g2d = (Graphics2D)this.getGraphics();
+
+        g2d.drawImage(backBufferImage,0,0,null);
+    }
+
+    private void loadImage() {
+
+            background = Utils.loadAssetsImage("background/0.png");
+            player.image = Utils.loadAssetsImage("players/straight/0.png");
+
     }
 
     private void setUpWindow() {

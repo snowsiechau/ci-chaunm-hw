@@ -1,10 +1,11 @@
 package game;
 
+import bases.Contraints;
 import game.enemies.Enemy;
 import game.players.Player;
 import game.players.PlayerSpell;
 
-import javax.imageio.ImageIO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -12,11 +13,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+
 import java.util.ArrayList;
 
-import static sun.misc.PostVMInitHook.run;
 
 /**
  * Created by SNOW on 7/9/2017.
@@ -36,16 +35,17 @@ public class GameWindow extends JFrame{
 
     boolean rightPressed, leftPressed, upPressed, downPressed, xPressed;
 
-    private int delaySpell, delayEnemiesGreen, delayEnemiesRed;
 
     public GameWindow(){
 
         setUpWindow();
         loadImage();
 
+        Contraints contraints = new Contraints(0, this.getHeight(), 0, background.getWidth());
 
-        player.x = background.getWidth() / 2;
-        player.y = this.getHeight() - 100;
+        player.position.set(background.getWidth() / 2, this.getHeight() - 50);
+
+        player.setContraints(contraints);
 
         backGroundY = this.getHeight() - background.getHeight();
 
@@ -147,71 +147,25 @@ public class GameWindow extends JFrame{
         int dy = 0;
 
         if (rightPressed){
-            if (player.x < background.getWidth() - 30){
-                dx += 5;
-            }
+            dx += 5;
         }
         if (leftPressed){
-            if (player.x > 5){
-                dx -= 5;
-            }
+            dx -= 5;
         }
         if (downPressed){
-            if (player.y < 720 ){
-                dy += 5;
-            }
+            dy += 5;
         }
         if (upPressed){
-            if (player.y > 30 ){
-                dy -= 5;
-            }
+            dy -= 5;
         }
 
-        if (delaySpell > 20) {
-            if (xPressed) {
-                PlayerSpell playerSpell = new PlayerSpell();
-
-                playerSpell.x = player.x + 5;
-                playerSpell.y = player.y - 10;
-
-                playerSpell.image = Utils.loadAssetsImage("player-bullets/a/1.png");
-
-                playerSpells.add(playerSpell);
-
-                delaySpell = 0;
-            }
-        }else {
-            delaySpell++;
+        if (xPressed){
+            player.castSpell(playerSpells);
         }
 
-        //Enemies
+        player.cooldown();
 
-        if (delayEnemiesGreen > 20){
-            Enemy enemy = new Enemy();
-
-            enemy.x = (int) (Math.random()* (background.getWidth()-15) );
-            enemy.y = 0;
-
-            enemy.imageGreen = Utils.loadAssetsImage("enemies/bullets/green.png");
-
-            enemies.add(enemy);
-
-            delayEnemiesGreen = 0;
-
-        }else {
-            delayEnemiesGreen++;
-        }
-
-
-
-
-        // Move
-        for (Enemy enemy : enemies
-             ) {
-            enemy.move();
-        }
-
-        player.move(dx,dy);
+        player.move(dx, dy);
 
         for (PlayerSpell playerSpell : playerSpells
                 ) {
@@ -227,11 +181,6 @@ public class GameWindow extends JFrame{
 
         player.render(backBufferGraphic2D);
 
-        for (Enemy enemy: enemies
-             ) {
-            enemy.render(backBufferGraphic2D);
-        }
-
         for (PlayerSpell playerSpell : playerSpells
              ) {
             playerSpell.render(backBufferGraphic2D);
@@ -245,7 +194,6 @@ public class GameWindow extends JFrame{
     private void loadImage() {
 
             background = Utils.loadAssetsImage("background/0.png");
-            player.image = Utils.loadAssetsImage("players/straight/0.png");
 
     }
 

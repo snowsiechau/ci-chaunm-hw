@@ -1,6 +1,7 @@
 package game;
 
 import bases.Contraints;
+import bases.FrameCounter;
 import game.enemies.Enemy;
 import game.players.Player;
 import game.players.PlayerSpell;
@@ -14,7 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
-import java.util.ArrayList;
+import java.util.*;
 
 
 /**
@@ -28,6 +29,8 @@ public class GameWindow extends JFrame{
     ArrayList<PlayerSpell> playerSpells = new ArrayList<>();
     ArrayList<Enemy> enemies = new ArrayList<>();
 
+    FrameCounter frameCounter = new FrameCounter(17);
+
     private int backGroundY;
 
     BufferedImage backBufferImage;
@@ -35,6 +38,7 @@ public class GameWindow extends JFrame{
 
     boolean rightPressed, leftPressed, upPressed, downPressed, xPressed;
 
+    int enemyX = -5;
 
     public GameWindow(){
 
@@ -167,6 +171,36 @@ public class GameWindow extends JFrame{
 
         player.move(dx, dy);
 
+
+
+        if (frameCounter.run()){
+
+            int random = (int) (Math.random() * background.getWidth());
+
+            Enemy enemy1 = new Enemy(0);
+            Enemy enemy2 = new Enemy(1);
+            Enemy enemy3 = new Enemy(-1);
+
+            enemy1.position.set(random, 0);
+            enemy2.position.set(random, 0);
+            enemy3.position.set(random, 0);
+
+            enemies.add(enemy1);
+            enemies.add(enemy2);
+            enemies.add(enemy3);
+
+            frameCounter.reset();
+        }
+
+        Contraints contraints = new Contraints(0, this.getHeight(), 0, background.getWidth());
+
+
+        for (Enemy enemy: enemies
+             ) {
+            enemy.setContraints(contraints);
+            enemy.move();
+        }
+
         for (PlayerSpell playerSpell : playerSpells
                 ) {
             playerSpell.move();
@@ -180,6 +214,11 @@ public class GameWindow extends JFrame{
         backBufferGraphic2D.drawImage(background, 0, backGroundY, null);
 
         player.render(backBufferGraphic2D);
+
+        for (Enemy enemy: enemies
+             ) {
+            enemy.render(backBufferGraphic2D);
+        }
 
         for (PlayerSpell playerSpell : playerSpells
              ) {

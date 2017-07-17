@@ -16,7 +16,7 @@ public class Contraints {
         this.right = right;
     }
 
-    public void make(Vector2D position){
+    public void make (Vector2D position){
         position.x =  Mathx.clamp(position.x, left, right);
         position.y =  Mathx.clamp(position.y, top, bottom);
     }

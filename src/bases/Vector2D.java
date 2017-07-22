@@ -43,6 +43,25 @@ public class Vector2D {
         return add(other.x, other.y);
     }
 
+    public float magnitude(){
+        return (float) Math.sqrt(x*x + y*y);
+    }
+
+    public void nomalize(){
+        float magnitude = magnitude();
+        this.x = this.x / magnitude;
+        this.y = this.y / magnitude;
+    }
+
+    public Vector2D clone(){
+        return new Vector2D(this.x, this.y);
+    }
+
+    public void multiply(float a) {
+        this.x = this.x * a;
+        this.y = this.y * a;
+    }
+
     @Override
     public String toString() {
         return "Vector2D{" +

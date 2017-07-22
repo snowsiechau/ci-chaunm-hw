@@ -89,7 +89,7 @@ public class Player extends GameObjects {
             }
         }
     }
-
+    
     public void render(Graphics2D g2d){
         renderer.render(g2d, this.position);
     }

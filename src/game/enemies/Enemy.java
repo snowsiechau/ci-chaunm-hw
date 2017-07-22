@@ -1,44 +1,46 @@
 package game.enemies;
 
-import bases.Contraints;
 import bases.FrameCounter;
+import bases.GameObjects;
 import bases.ImageRenderer;
-import bases.Vector2D;
 import game.Utils;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.nio.Buffer;
+
 
 /**
- * Created by SNOW on 7/13/2017.
+ * Created by SNOW on 7/21/2017.
  */
-public class Enemy {
-    public Vector2D position;
-    public ImageRenderer imageRenderer;
+public class Enemy extends GameObjects{
 
-    Contraints contraints;
+    FrameCounter frameCounter;
 
-    public int x;
-
-    public Enemy(int x){
-        this.position = new Vector2D();
-        this.imageRenderer = new ImageRenderer(Utils.loadAssetsImage("enemies/bullets/green.png"));
-        this.x = x;
-    }
-
-    public void move(){
-        this.position.addUp(this.x, 5);
-        contraints.make(this.position);
-
+    public Enemy(){
+        this.frameCounter = new FrameCounter(100);
+        this.renderer = new ImageRenderer(Utils.loadAssetsImage("enemies/level0/black/0.png"));
 
     }
 
-    public void render(Graphics2D g2d){
-        imageRenderer.render(g2d, this.position);
+
+    @Override
+    public void run() {
+        this.position.addUp(0, 3);
+        spells();
     }
 
-    public void setContraints(Contraints contraints){
-        this.contraints = contraints;
+    @Override
+    public void render(Graphics2D g2d) {
+        renderer.render(g2d, this.position);
+    }
+
+    public void spells(){
+        if (frameCounter.run()){
+            EnemySpells enemySpells = new EnemySpells();
+            enemySpells.position.set(this.position.x, this.position.y + 20);
+
+            GameObjects.add(enemySpells);
+
+            frameCounter.reset();
+        }
     }
 }

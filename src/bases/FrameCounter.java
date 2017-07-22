@@ -9,6 +9,7 @@ public class FrameCounter {
 
     public FrameCounter(int countMax) {
         this.countMax = countMax;
+        this.count =countMax;
     }
 
     public void reset(){
@@ -22,8 +23,5 @@ public class FrameCounter {
         }
         return true;
     }
-
-
-
 
 }

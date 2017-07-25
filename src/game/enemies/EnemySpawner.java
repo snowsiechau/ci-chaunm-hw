@@ -5,6 +5,7 @@ import bases.GameObjects;
 import bases.Vector2D;
 import game.players.ChildPlayerBullet;
 import game.players.Player;
+import game.scenes.Setting;
 
 import java.util.Random;
 

@@ -2,7 +2,9 @@ package game.players;
 
 import bases.GameObjects;
 import bases.ImageRenderer;
+import bases.Vector2D;
 import game.Utils;
+import game.scenes.Setting;
 
 import java.awt.*;
 
@@ -16,8 +18,10 @@ public class PlayerSpell extends GameObjects{
    }
 
    @Override
-   public void run(){
-       this.position.addUp(0,-10);
+   public void run(Vector2D parentPosition){
+
+       super.run(parentPosition);
+       this.position.addUp(0, Setting.SPEED_PLAYER_SPELL);
 
    }
 }

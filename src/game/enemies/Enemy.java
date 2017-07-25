@@ -1,9 +1,10 @@
 package game.enemies;
 
-import bases.FrameCounter;
-import bases.GameObjects;
-import bases.ImageRenderer;
+import bases.*;
 import game.Utils;
+import game.players.ChildPlayerBullet;
+import game.players.Player;
+import game.scenes.Setting;
 
 import java.awt.*;
 
@@ -13,34 +14,54 @@ import java.awt.*;
  */
 public class Enemy extends GameObjects{
 
-    FrameCounter frameCounter;
+    private FrameCounter shootCounter;
+
+    public Vector2D velocity;
+
+    Boxcollider boxcollider;
 
     public Enemy(){
-        this.frameCounter = new FrameCounter(100);
+        super();
+        this.shootCounter = new FrameCounter(100);
         this.renderer = new ImageRenderer(Utils.loadAssetsImage("enemies/level0/black/0.png"));
+        this.velocity = new Vector2D();
+
+        boxcollider = new Boxcollider(20,20);
+        this.children.add(boxcollider);
 
     }
 
 
     @Override
-    public void run() {
-        this.position.addUp(0, 3);
-        spells();
-    }
+    public void run(Vector2D parentPosition) {
+        super.run(parentPosition);
 
-    @Override
-    public void render(Graphics2D g2d) {
-        renderer.render(g2d, this.position);
-    }
+        velocity.y = Setting.SPEED_ENEMY;
+        this.position.addUp(velocity);
 
-    public void spells(){
-        if (frameCounter.run()){
-            EnemySpells enemySpells = new EnemySpells();
-            enemySpells.position.set(this.position.x, this.position.y + 20);
+        if (this.position.y < 800) {
+            if (shootCounter.run()) {
+                this.shootCounter.reset();
 
-            GameObjects.add(enemySpells);
+                shoot();
 
-            frameCounter.reset();
+            }
         }
+
+
+    }
+
+    private void shoot() {
+        Vector2D target = Player.instance.position;
+
+        Vector2D bulletVelocity = target.substract(position)
+                .nomalize()
+                .multiply(Setting.SPEDD_ENEMY_BULLET);
+
+        EnemyBullet enemyBullet = new EnemyBullet();
+        enemyBullet.velocity.set(bulletVelocity);
+        enemyBullet.position.set(this.position);
+
+        GameObjects.add(enemyBullet);
     }
 }

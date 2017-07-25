@@ -1,5 +1,7 @@
 package bases;
 
+import java.util.Vector;
+
 /**
  * Created by SNOW on 7/17/2017.
  */
@@ -43,23 +45,21 @@ public class Vector2D {
         return add(other.x, other.y);
     }
 
-    public float magnitude(){
-        return (float) Math.sqrt(x*x + y*y);
+    public Vector2D substract(float x, float y){
+        return new Vector2D(this.x - x, this.y - y);
     }
 
-    public void nomalize(){
-        float magnitude = magnitude();
-        this.x = this.x / magnitude;
-        this.y = this.y / magnitude;
+    public Vector2D substract(Vector2D other){
+        return substract(other.x, other.y);
     }
 
-    public Vector2D clone(){
-        return new Vector2D(this.x, this.y);
+    public Vector2D nomalize(){
+        float length = (float) Math.sqrt(x * x + y * y);
+        return new Vector2D(x / length, y / length);
     }
 
-    public void multiply(float a) {
-        this.x = this.x * a;
-        this.y = this.y * a;
+    public Vector2D multiply(float a) {
+        return new Vector2D(this.x * a, this.y * a);
     }
 
     @Override

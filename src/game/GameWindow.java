@@ -6,6 +6,8 @@ import game.enemies.Enemy;
 import game.enemies.EnemySpawner;
 import game.inputs.InputManager;
 import game.players.Player;
+import game.scenes.Background;
+import game.scenes.Setting;
 
 
 import javax.swing.*;
@@ -16,21 +18,18 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
-import java.util.*;
-
 
 /**
  * Created by SNOW on 7/9/2017.
  */
 public class GameWindow extends JFrame{
 
-    Background background = new Background();
-
-
     BufferedImage backBufferImage;
     Graphics2D backBufferGraphic2D;
 
     InputManager inputManager = new InputManager();
+
+    Background background;
 
     public GameWindow(){
 
@@ -55,8 +54,9 @@ public class GameWindow extends JFrame{
     }
 
     private void addBackground() {
+        background = new Background();
 
-        background.position.set(background.renderer.image.getWidth() / 2, 0);
+        background.position.y = this.getHeight();
 
         GameObjects.add(background);
 
@@ -65,9 +65,9 @@ public class GameWindow extends JFrame{
     private void addPlayer() {
         Player player = new Player();
 
-        player.setContraints(new Contraints(0, this.getHeight(), 0, background.renderer.image.getWidth()));
+        player.setContraints(new Contraints(0, this.getHeight(), 0, background.renderer.getWidth()));
         player.setInputManager(inputManager);
-        player.position.set(background.renderer.image.getWidth() / 2 , this.getHeight() - 50);
+        player.position.set(background.renderer.getWidth() / 2 , this.getHeight() - 50);
 
         GameObjects.add(player);
     }
@@ -125,7 +125,7 @@ public class GameWindow extends JFrame{
 
 
     private void setUpWindow() {
-        this.setSize(800, 800);
+        this.setSize(Setting.WIDTH_WINDOW, Setting.HEIGHT_WINDOW);
 
         this.setResizable(false);
         this.setTitle("Touhou - remade by SNOW");

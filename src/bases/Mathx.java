@@ -10,4 +10,9 @@ public class Mathx {
         if (value < min) return min;
         return value;
     }
+
+    public static boolean inRange(float value, float min, float max){
+        return value > max && value < max;
+
+    }
 }

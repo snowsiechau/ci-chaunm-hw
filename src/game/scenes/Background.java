@@ -1,7 +1,7 @@
 package game.scenes;
 
 import bases.*;
-import com.sun.prism.impl.FactoryResetException;
+import bases.renderers.ImageRenderer;
 import game.Utils;
 
 /**
@@ -9,19 +9,20 @@ import game.Utils;
  */
 public class Background extends GameObjects{
 
-    Contraints contraints;
+    ImageRenderer imageRenderer;
 
     public Background(){
         super();
-        this.renderer = new ImageRenderer(Utils.loadAssetsImage("background/0.png"));
-        this.renderer.anchor.set(0,1);
-        this.contraints = new Contraints(0, renderer.getHeight(), 0, 400);
+        imageRenderer = new ImageRenderer(Utils.loadAssetsImage("background/0.png"));
+        imageRenderer.anchor.set(0,1);
+        this.renderer = imageRenderer;
     }
 
     @Override
     public void run(Vector2D parentPosition) {
-        this.position.addUp(0,1);
-        contraints.make(position);
+        if (this.position.y - imageRenderer.getHeight() < 0) {
+            this.position.addUp(0, 1);
+        }
     }
 
 }

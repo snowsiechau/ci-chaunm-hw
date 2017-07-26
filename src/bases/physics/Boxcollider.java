@@ -1,9 +1,12 @@
-package bases;
+package bases.physics;
+
+import bases.GameObjects;
+import bases.Mathx;
 
 /**
  * Created by SNOW on 7/25/2017.
  */
-public class Boxcollider extends GameObjects{
+public class Boxcollider extends GameObjects {
     public float width;
     public float height;
 
@@ -17,19 +20,19 @@ public class Boxcollider extends GameObjects{
     }
 
     public float left(){
-        return this.position.x - width / 2;
+        return this.screenPosition.x - width / 2;
     }
 
     public float right(){
-        return this.position.x + width / 2;
+        return this.screenPosition.x + width / 2;
     }
 
     public float top(){
-        return this.position.y - height / 2;
+        return this.screenPosition.y - height / 2;
     }
 
     public float bottom(){
-        return this.position.y + height / 2;
+        return this.screenPosition.y + height / 2;
     }
 
     public boolean collideWidth(Boxcollider other){

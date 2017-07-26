@@ -65,9 +65,9 @@ public class GameWindow extends JFrame{
     private void addPlayer() {
         Player player = new Player();
 
-        player.setContraints(new Contraints(0, this.getHeight(), 0, background.renderer.getWidth()));
+        player.setContraints(new Contraints(0, this.getHeight(), 0, Setting.WIDTH_BACKGROUND));
         player.setInputManager(inputManager);
-        player.position.set(background.renderer.getWidth() / 2 , this.getHeight() - 50);
+        player.position.set(Setting.WIDTH_BACKGROUND / 2 , this.getHeight() - 50);
 
         GameObjects.add(player);
     }
@@ -76,7 +76,6 @@ public class GameWindow extends JFrame{
         this.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-
             }
 
             @Override
@@ -119,7 +118,6 @@ public class GameWindow extends JFrame{
         GameObjects.renderAll(backBufferGraphic2D);
 
         Graphics2D g2d = (Graphics2D)this.getGraphics();
-
         g2d.drawImage(backBufferImage,0,0,null);
     }
 
@@ -138,6 +136,4 @@ public class GameWindow extends JFrame{
             }
         });
     }
-
-
 }

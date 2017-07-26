@@ -10,6 +10,8 @@ public class Vector2D {
     public float x;
     public float y;
 
+    public static final Vector2D ZERO = new Vector2D(0,0);
+
     public Vector2D(float x, float y){
         this.x = x;
         this.y = y;

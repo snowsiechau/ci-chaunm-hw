@@ -12,7 +12,7 @@ public class Mathx {
     }
 
     public static boolean inRange(float value, float min, float max){
-        return value > max && value < max;
+        return value >= min && value <= max;
 
     }
 }

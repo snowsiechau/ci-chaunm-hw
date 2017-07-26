@@ -1,18 +1,19 @@
 package game.enemies;
 
 import bases.*;
+import bases.physics.Boxcollider;
+import bases.physics.PhysicsBody;
+import bases.renderers.Animation;
+
 import game.Utils;
-import game.players.ChildPlayerBullet;
 import game.players.Player;
 import game.scenes.Setting;
-
-import java.awt.*;
 
 
 /**
  * Created by SNOW on 7/21/2017.
  */
-public class Enemy extends GameObjects{
+public class Enemy extends GameObjects implements PhysicsBody{
 
     private FrameCounter shootCounter;
 
@@ -22,9 +23,14 @@ public class Enemy extends GameObjects{
 
     public Enemy(){
         super();
-        this.shootCounter = new FrameCounter(100);
-        this.renderer = new ImageRenderer(Utils.loadAssetsImage("enemies/level0/black/0.png"));
+        this.shootCounter = new FrameCounter(50);
         this.velocity = new Vector2D();
+
+        this.renderer = new Animation(Utils.loadAssetsImage("enemies/level0/blue/0.png"),
+                Utils.loadAssetsImage("enemies/level0/blue/1.png"),
+                Utils.loadAssetsImage("enemies/level0/blue/2.png"),
+                Utils.loadAssetsImage("enemies/level0/blue/3.png")
+        );
 
         boxcollider = new Boxcollider(20,20);
         this.children.add(boxcollider);
@@ -37,31 +43,28 @@ public class Enemy extends GameObjects{
         super.run(parentPosition);
 
         velocity.y = Setting.SPEED_ENEMY;
+
         this.position.addUp(velocity);
-
-        if (this.position.y < 800) {
-            if (shootCounter.run()) {
-                this.shootCounter.reset();
-
-                shoot();
-
-            }
+        if (shootCounter.run()) {
+            this.shootCounter.reset();
+            shoot();
         }
-
-
     }
 
     private void shoot() {
         Vector2D target = Player.instance.position;
-
         Vector2D bulletVelocity = target.substract(position)
                 .nomalize()
                 .multiply(Setting.SPEDD_ENEMY_BULLET);
 
-        EnemyBullet enemyBullet = new EnemyBullet();
+        EnemyBullet enemyBullet = GameObjectPool.recycle(EnemyBullet.class);
         enemyBullet.velocity.set(bulletVelocity);
-        enemyBullet.position.set(this.position);
+        enemyBullet.position.set(this.position.x, this.position.y + 15);
 
-        GameObjects.add(enemyBullet);
+    }
+
+    @Override
+    public Boxcollider getBoxcollider() {
+        return boxcollider;
     }
 }

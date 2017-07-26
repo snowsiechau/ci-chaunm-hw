@@ -1,6 +1,7 @@
 package game.players;
 
 import bases.*;
+import bases.renderers.ImageRenderer;
 import game.Utils;
 import game.inputs.InputManager;
 import game.scenes.Setting;
@@ -20,8 +21,6 @@ public class Player extends GameObjects {
 
     public static Player instance;
 
-    ChildPlayer childPlayerLeft;
-    ChildPlayer childPlayerRight;
 
     public Player(){
         super();
@@ -31,13 +30,6 @@ public class Player extends GameObjects {
 
         instance = this;
 
-        childPlayerLeft = new ChildPlayer();
-        childPlayerLeft.position.set(-30, 0);
-        this.children.add(childPlayerLeft);
-
-        childPlayerRight = new ChildPlayer();
-        childPlayerRight.position.set(30, 0);
-        this.children.add(childPlayerRight);
     }
 
     @Override
@@ -62,9 +54,9 @@ public class Player extends GameObjects {
     public void castSpell(){
         if (!spellDisable) {
             if (inputManager.xPressed) {
-                PlayerSpell playerSpell = new PlayerSpell();
-                playerSpell.position.set(this.position.add(0, -30));
-                GameObjects.add(playerSpell);
+                PlayerSpell playerSpell = GameObjectPool.recycle(PlayerSpell.class);
+                playerSpell.position.set(this.position.add(0, -20));
+
             }
                 spellDisable = true;
         }

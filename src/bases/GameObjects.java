@@ -1,5 +1,10 @@
 package bases;
 
+import bases.physics.Physics;
+import bases.physics.PhysicsBody;
+import bases.renderers.ImageRenderer;
+import bases.renderers.Renderer;
+
 import java.awt.*;
 import java.util.Vector;
 
@@ -9,13 +14,13 @@ import java.util.Vector;
 public class GameObjects {
 
     public Vector2D position;
-
     public Vector2D screenPosition;
 
-    public ImageRenderer renderer;
+    public Renderer renderer;
+
+    public boolean isActive;
 
     public  Vector<GameObjects> children;
-
     private static Vector<GameObjects> gameObjects = new Vector<>();
     private static Vector<GameObjects> newGameObjects = new Vector<>();
 
@@ -23,29 +28,41 @@ public class GameObjects {
         this.position = new Vector2D();
         this.screenPosition = new Vector2D();
         this.children = new Vector<>();
+        this.isActive = true;
+    }
+
+    public boolean isActive(){
+        return isActive;
+    }
+
+    public void setActive(boolean active){
+        this.isActive = active;
     }
 
     public static void add(GameObjects gameObjects){
         newGameObjects.add(gameObjects);
+
+        if (gameObjects instanceof PhysicsBody){
+            Physics.add((PhysicsBody) gameObjects);
+        }
     }
 
     public static void runAll(){
         for (GameObjects gameObject: gameObjects) {
-            gameObject.run(new Vector2D(0,0));
+            if (gameObject.isActive) {
+                gameObject.run(Vector2D.ZERO);
+            }
         }
-
         gameObjects.addAll(newGameObjects);
         newGameObjects.clear();
+        System.out.println(gameObjects.size());
     }
 
     public static void renderAll(Graphics2D g2d){
         for (GameObjects gameObject: gameObjects) {
-            gameObject.render(g2d, gameObject.position);
-
-            for (GameObjects child: gameObject.children){
-                child.render(g2d, child.screenPosition);
+            if (gameObject.isActive) {
+                gameObject.render(g2d, gameObject.position);
             }
-
         }
     }
 

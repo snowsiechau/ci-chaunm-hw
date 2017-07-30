@@ -6,8 +6,8 @@ import java.awt.event.KeyEvent;
  * Created by SNOW on 7/20/2017.
  */
 public class InputManager {
-    public boolean leftPressed;
-    public boolean rightPressed;
+    public boolean leftPressed = false;
+    public boolean rightPressed = false;
     public boolean upPressed;
     public boolean downPressed;
     public boolean xPressed;

@@ -18,6 +18,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
+import javafx.embed.swing.JFXPanel;
 
 /**
  * Created by SNOW on 7/9/2017.
@@ -30,6 +31,8 @@ public class GameWindow extends JFrame{
     InputManager inputManager = new InputManager();
 
     Background background;
+
+    final JFXPanel jfxPanel = new JFXPanel();
 
     public GameWindow(){
 

@@ -1,8 +1,6 @@
 package game.players;
 
-import bases.GameObjectPool;
 import bases.GameObjects;
-import bases.renderers.Animation;
 import bases.renderers.ImageRenderer;
 import bases.Vector2D;
 import bases.physics.Boxcollider;
@@ -12,6 +10,10 @@ import game.Utils;
 import game.enemies.Enemy;
 import game.enemies.EnemyBoom;
 import game.scenes.Setting;
+import tklibs.AudioUtils;
+
+import javax.sound.sampled.Clip;
+
 
 /**
  * Created by SNOW on 7/13/2017.
@@ -24,6 +26,7 @@ public class PlayerSpell extends GameObjects implements PhysicsBody{
        this.renderer = new ImageRenderer(Utils.loadAssetsImage("player-spells/a/1.png"));
        this.boxcollider = new Boxcollider(20,20);
        children.add(boxcollider);
+
    }
 
    @Override
@@ -43,6 +46,12 @@ public class PlayerSpell extends GameObjects implements PhysicsBody{
         if (hitEnemy != null){
             hitEnemy.isActive = false;
             this.isActive = false;
+
+            AudioUtils audioUtils = new AudioUtils();
+            Clip clip = audioUtils.loadSound("assets/music/sfx/enemy-explosion.wav");
+            clip.setFramePosition(0);
+            clip.start();
+
             EnemyBoom enemyBoom = new EnemyBoom();
             enemyBoom.position.set(this.position);
             GameObjects.add(enemyBoom);

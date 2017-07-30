@@ -3,6 +3,7 @@ package game.scenes;
 import bases.*;
 import bases.renderers.ImageRenderer;
 import game.Utils;
+import tklibs.AudioUtils;
 
 /**
  * Created by SNOW on 7/21/2017.
@@ -10,12 +11,14 @@ import game.Utils;
 public class Background extends GameObjects{
 
     ImageRenderer imageRenderer;
+    AudioUtils audioUtils = new AudioUtils();
 
     public Background(){
         super();
         imageRenderer = new ImageRenderer(Utils.loadAssetsImage("background/0.png"));
         imageRenderer.anchor.set(0,1);
         this.renderer = imageRenderer;
+        this.audioUtils.playMedia("assets/music/1.mp3");
     }
 
     @Override

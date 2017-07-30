@@ -1,15 +1,22 @@
 package game.players;
 
 import bases.*;
+import bases.physics.Boxcollider;
+import bases.physics.PhysicsBody;
+import bases.renderers.Animation;
 import bases.renderers.ImageRenderer;
 import game.Utils;
 import game.inputs.InputManager;
 import game.scenes.Setting;
+import sun.nio.cs.UTF_32LE;
+import tklibs.AudioUtils;
+
+import javax.sound.sampled.Clip;
 
 /**
  * Created by SNOW on 7/13/2017.
  */
-public class Player extends GameObjects {
+public class Player extends GameObjects implements PhysicsBody{
     Contraints contraints;
     InputManager inputManager;
 
@@ -21,15 +28,26 @@ public class Player extends GameObjects {
 
     public static Player instance;
 
+    private Boxcollider boxcollider;
+
 
     public Player(){
         super();
         this.velocity = new Vector2D();
         this.cooldownCounter = new FrameCounter(10);
-        this.renderer = new ImageRenderer(Utils.loadAssetsImage("players/straight/0.png"));
+
+        this.renderer = new Animation(10, Utils.loadAssetsImage("players/straight/0.png"),
+                Utils.loadAssetsImage("players/straight/1.png"),
+                Utils.loadAssetsImage("players/straight/2.png"),
+                Utils.loadAssetsImage("players/straight/3.png"),
+                Utils.loadAssetsImage("players/straight/4.png"),
+                Utils.loadAssetsImage("players/straight/5.png"),
+                Utils.loadAssetsImage("players/straight/6.png")
+        );
 
         instance = this;
 
+        this.boxcollider = new Boxcollider(20,20);
     }
 
     @Override
@@ -57,6 +75,11 @@ public class Player extends GameObjects {
                 PlayerSpell playerSpell = GameObjectPool.recycle(PlayerSpell.class);
                 playerSpell.position.set(this.position.add(0, -20));
 
+                AudioUtils audioUtils = new AudioUtils();
+                Clip clip = audioUtils.loadSound("assets/music/sfx/player-shoot.wav");
+                clip.setFramePosition(0);
+                clip.start();
+
             }
                 spellDisable = true;
         }
@@ -81,4 +104,8 @@ public class Player extends GameObjects {
         this.inputManager = inputManager;
     }
 
+    @Override
+    public Boxcollider getBoxcollider() {
+        return boxcollider;
+    }
 }

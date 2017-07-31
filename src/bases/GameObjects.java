@@ -75,12 +75,14 @@ public class GameObjects {
         }
     }
 
-    public void render(Graphics2D g2d, Vector2D position){
+    public void render(Graphics2D g2d, Vector2D position) {
         if (renderer != null) {
             renderer.render(g2d, position);
         }
     }
 
-
+    public void refresh(){
+        isActive = true;
+    }
 
 }

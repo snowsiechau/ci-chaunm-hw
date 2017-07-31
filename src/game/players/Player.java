@@ -30,32 +30,33 @@ public class Player extends GameObjects implements PhysicsBody{
 
     private Boxcollider boxcollider;
 
+    private PlayerAnimator playerAnimator;
+
 
     public Player(){
         super();
         this.velocity = new Vector2D();
         this.cooldownCounter = new FrameCounter(10);
-
-        this.renderer = new Animation(10, Utils.loadAssetsImage("players/straight/0.png"),
-                Utils.loadAssetsImage("players/straight/1.png"),
-                Utils.loadAssetsImage("players/straight/2.png"),
-                Utils.loadAssetsImage("players/straight/3.png"),
-                Utils.loadAssetsImage("players/straight/4.png"),
-                Utils.loadAssetsImage("players/straight/5.png"),
-                Utils.loadAssetsImage("players/straight/6.png")
-        );
+        this.playerAnimator = new PlayerAnimator();
+        this.renderer = playerAnimator;
 
         instance = this;
 
         this.boxcollider = new Boxcollider(20,20);
+        children.add(boxcollider);
     }
 
     @Override
     public void run(Vector2D parentPosition) {
         super.run(parentPosition);
         move();
+        animate();
         castSpell();
         cooldown();
+    }
+
+    private void animate() {
+        playerAnimator.run(this);
     }
 
     public void move(){
@@ -79,7 +80,6 @@ public class Player extends GameObjects implements PhysicsBody{
                 Clip clip = audioUtils.loadSound("assets/music/sfx/player-shoot.wav");
                 clip.setFramePosition(0);
                 clip.start();
-
             }
                 spellDisable = true;
         }
@@ -94,6 +94,15 @@ public class Player extends GameObjects implements PhysicsBody{
                 cooldownCounter.reset();
             }
         }
+    }
+
+    public void getHit(int damage){
+        this.isActive = false;
+        PlayerExplosion playerExplosion = GameObjectPool.recycle(PlayerExplosion.class);
+        playerExplosion.position.set(this.position);
+
+
+        Player.instance.setActive(true);
     }
 
     public void setContraints(Contraints contraints){

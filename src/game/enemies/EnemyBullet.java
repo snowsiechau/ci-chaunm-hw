@@ -9,6 +9,7 @@ import bases.renderers.ImageRenderer;
 import bases.Vector2D;
 import game.Utils;
 import game.players.Player;
+import game.scenes.Setting;
 import tklibs.AudioUtils;
 
 import javax.sound.sampled.Clip;
@@ -27,6 +28,7 @@ public class EnemyBullet extends GameObjects implements PhysicsBody{
         this.renderer = new ImageRenderer(Utils.loadAssetsImage("enemies/bullets/blue.png"));
         this.boxcollider = new Boxcollider(20,20);
 
+        children.add(boxcollider);
     }
 
     @Override
@@ -36,15 +38,22 @@ public class EnemyBullet extends GameObjects implements PhysicsBody{
 
         hitPlayer();
 
-        if (this.position.y > 800){
+        if (this.position.y > 800 || this.position.y < 0 || this.position.x < 0 || this.position.x > Setting.WIDTH_BACKGROUND){
             this.isActive = false;
         }
     }
 
     private void hitPlayer() {
-        Player.instance = Physics.bodyInRed(this.boxcollider, Player.class);
+        Player hitPlayer = Physics.bodyInRed(this.boxcollider, Player.class);
+        if (hitPlayer != null){
+            hitPlayer.getHit(1);
+            this.isActive = false;
 
-
+            AudioUtils audioUtils = new AudioUtils();
+            Clip clip = audioUtils.loadSound("assets/music/sfx/player-dead.wav");
+            clip.setFramePosition(0);
+            clip.start();
+        }
     }
 
     @Override

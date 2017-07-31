@@ -8,7 +8,6 @@ import bases.physics.Physics;
 import bases.physics.PhysicsBody;
 import game.Utils;
 import game.enemies.Enemy;
-import game.enemies.EnemyBoom;
 import game.scenes.Setting;
 import tklibs.AudioUtils;
 
@@ -44,7 +43,7 @@ public class PlayerSpell extends GameObjects implements PhysicsBody{
     private void hitEnemy() {
         Enemy hitEnemy = Physics.bodyInRed(this.boxcollider, Enemy.class);
         if (hitEnemy != null){
-            hitEnemy.isActive = false;
+            hitEnemy.getHit(1);
             this.isActive = false;
 
             AudioUtils audioUtils = new AudioUtils();
@@ -52,9 +51,6 @@ public class PlayerSpell extends GameObjects implements PhysicsBody{
             clip.setFramePosition(0);
             clip.start();
 
-            EnemyBoom enemyBoom = new EnemyBoom();
-            enemyBoom.position.set(this.position);
-            GameObjects.add(enemyBoom);
         }
     }
 

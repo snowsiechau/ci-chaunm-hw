@@ -63,6 +63,12 @@ public class Enemy extends GameObjects implements PhysicsBody{
 
     }
 
+    public void getHit(int damage){
+        this.isActive = false;
+        EnemyExplosion enemyExplosion = GameObjectPool.recycle(EnemyExplosion.class);
+        enemyExplosion.position.set(this.position);
+    }
+
     @Override
     public Boxcollider getBoxcollider() {
         return boxcollider;

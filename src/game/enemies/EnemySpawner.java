@@ -1,6 +1,7 @@
 package game.enemies;
 
 import bases.FrameCounter;
+import bases.GameObjectPool;
 import bases.GameObjects;
 import bases.Vector2D;
 import game.players.Player;
@@ -22,11 +23,10 @@ public class EnemySpawner extends GameObjects{
         if (enemyCounter.run()) {
             enemyCounter.reset();
 
-            Enemy enemy = new Enemy();
+            Enemy enemy = GameObjectPool.recycle(Enemy.class);
             float x = (int) (Math.random() * 300 + 5);
             enemy.position.set(x, 0);
 
-            GameObjects.add(enemy);
         }
     }
 
